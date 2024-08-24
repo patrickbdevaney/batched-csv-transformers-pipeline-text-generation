@@ -1,6 +1,6 @@
 # CSV Segmentation and Inference Pipeline for Dialogue Generation
 
-This approach involves taking a CSV file named `subject` with a single column containing *k* rows and splitting it into segmented CSV files of 1000 rows each. These segmented CSV files are then serialized. The generation script traverses the directory, identifies the CSV files, and generates Python scripts to run an inference pipeline. Each script processes the rows one by one, passing each subject to a predefined prompt designed to generate questions and answers about the subject, assuming the context of playing a character in a fantasy role-playing game world.
+This approach involves taking a CSV file named `subject` with a single column containing *k* rows and splitting it into segmented CSV files of 1000 rows each. These segmented CSV files are then serialized. The generation script traverses the directory, identifies the CSV files, and generates Python scripts to run an inference pipeline. Each script processes the rows one by one, passing each subject to a predefined prompt designed to generate questions and answers about the subject,  in this case assuming the context of playing a character in a fantasy role-playing game world.
 
 Using models like **Mistral-7b** or  **LLaMA 3.1 8B Instruct**, you can reliably generate diverse and creative responses for all rows in the CSV column, even when repeating a word from the `subject` column.
 
@@ -81,4 +81,5 @@ The next feature to implement is a script that uses the inference pipeline and a
 3. Done in as little as three command line arguments.
 
 ---
-
+One issue is that execution time is mainly influenced by max token length. The ideal thing is to set max token length
+low and just above the sum of tokens of the prompt and the length of the response you specify. Instruct language models aren't 100% consistent or predictable with prompt adherence. I have had outputs where it adds commentary or notes on characterizing the response which I would discard later. In this case I set max token length to 256 despite an expected 130 token length, since cut off output that lack the delimiting symbols for question and answer is no good. This however more than doubles the execution time.
