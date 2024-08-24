@@ -1,4 +1,4 @@
-# CSV Segmentation and Inference Pipeline for Fantasy Role-Playing Game Character Generation
+# CSV Segmentation and Inference Pipeline for Dialogue Generation
 
 This approach involves taking a CSV file named `subject` with a single column containing *k* rows and splitting it into segmented CSV files of 1000 rows each. These segmented CSV files are then serialized. The generation script traverses the directory, identifies the CSV files, and generates Python scripts to run an inference pipeline. Each script processes the rows one by one, passing each subject to a predefined prompt designed to generate questions and answers about the subject, assuming the context of playing a character in a fantasy role-playing game world.
 
