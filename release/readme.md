@@ -68,7 +68,7 @@ def generate_dialogue(subject):
    - You can pick up where you left off with the generation process.
 
 3. **Reduced Execution Time**:
-   - Orchestrating separate Python files with a shell script reduces execution time from 35-40 hours to ~26 hours (assuming 160 max token length), as the loops for a single file completely Python-based implementation introduce overhead to the inference pipeline.
+   - Orchestrating separate Python files with a shell script reduces execution time from 35-40 hours to ~26 hours (assuming 160 max token length and my csv having >36000 rows), as the loops for a single file completely Python-based implementation introduce overhead to the inference pipeline.
 
 ## Next Steps: Subject Generator Script
 
