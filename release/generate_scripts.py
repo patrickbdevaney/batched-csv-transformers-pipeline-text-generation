@@ -35,8 +35,9 @@ print("Text generation pipeline initialized with 16-bit precision.")
 
 # Function to generate dialogue based on the subject
 def generate_dialogue(subject):
-    prompt = f"You are a character in an ancient fantasy roleplaying game. Write a brief question and answer about {subject}. Each should be one sentence and 50 words or less. Enclose the question in *1* <question> *1* and the answer in *2* <answer> *2*."
-    generated_text = text_generator(prompt, max_length=256, truncation=True)[0]['generated_text']
+    prompt = f"Role: character from ancient fantasy RPG. in character Q&A about {subject}. Q: less than 15 words. A: less than 35 words. Enclose Q in *1* <question> *1* and A in *2* <answer> *2*. Do not include any commentary or notes on output."
+
+    generated_text = text_generator(prompt, max_length=165, truncation=True)[0]['generated_text']
     dialogue = re.sub(re.escape(prompt), "", generated_text).strip()
     return dialogue
 
@@ -51,11 +52,12 @@ result_df = pd.DataFrame(dialogues)
 result_df.to_csv('output_csv_SPLIT_NUM.csv', index=False)
 print("All dialogues written to output_csv_SPLIT_NUM.csv")
 
-# Save the generated texts to a .txt file
-with open('output_txt_SPLIT_NUM.txt', 'w') as txt_file:
+# Save the generated texts to a .txt file with utf-8 encoding
+with open('output_txt_SPLIT_NUM.txt', 'w', encoding='utf-8') as txt_file:
     for dialogue in dialogues:
         txt_file.write(dialogue['dialogue'] + '\\n')
 print("All dialogues written to output_txt_SPLIT_NUM.txt")
+
 
 # Clear GPU memory
 torch.cuda.empty_cache()
@@ -69,7 +71,7 @@ print("GPU memory cleared.")
         print("Processing file:", input_file)  # Print the filename being processed
         split_num = input_file.split('_')[-1].split('.')[0]
         script_content = template.replace('SPLIT_NUM', split_num)
-        with open(f'input_csv_split_{split_num}.py', 'w') as f:
+        with open(f'input_csv_split_{split_num}.py', 'w', encoding='utf-8') as f:
             f.write(script_content)
 
 # Create Python scripts for each split

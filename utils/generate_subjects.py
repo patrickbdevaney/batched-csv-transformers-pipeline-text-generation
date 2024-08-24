@@ -21,20 +21,16 @@ used_words = set()
 def generate_word(subject):
     prompt = f"List a word related to {subject} and do not repeat words."
     generated_text = text_generator(prompt, max_length=5, num_return_sequences=1)[0]['generated_text']
-    generated_word = generated_text.split()[-1]  # Get the last word from the generated text
+    generated_word = re.sub(rf'{re.escape(prompt)}\s*', '', generated_text).strip()  # Remove the prompt from the generated text
     return generated_word
 
 # Function to generate text and write to CSV
-def generate_and_write_to_csv(output_csv, num_iterations=10):
+def generate_and_write_to_csv(output_csv):
     dialogues = []
-    for _ in range(num_iterations):
-        # Select a subject that has not been used
-        available_subjects = [word for word in seed_words if word not in used_words]
-        if not available_subjects:
-            print("No more available subjects to use.")
-            break
+    for subject in seed_words:
+        if subject in used_words:
+            continue
 
-        subject = random.choice(available_subjects)
         generated_word = generate_word(subject)
         dialogues.append({'subject': generated_word})
 
@@ -51,11 +47,11 @@ def generate_and_write_to_csv(output_csv, num_iterations=10):
     # Save the generated texts to a .txt file with utf-8 encoding
     with open(output_csv.replace('.csv', '.txt'), 'w', encoding='utf-8') as txt_file:
         for dialogue in dialogues:
-            txt_file.write(dialogue['subject'] + '\\n')
+            txt_file.write(dialogue['subject'] + '\n')
     print(f"All generated words written to {output_csv.replace('.csv', '.txt')}")
 
 # Run the function
-generate_and_write_to_csv('subjects.csv')
+generate_and_write_to_csv('subject.csv')
 
 # Clear GPU memory
 torch.cuda.empty_cache()
