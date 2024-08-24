@@ -81,5 +81,18 @@ The next feature to implement is a script that uses the inference pipeline and a
 3. Done in as little as three command line arguments.
 
 ---
+
+
+### How to use
+1. $ git clone this repo* Have the csv with subjects     #subject generator coming
+2. $ pip install xformers pytorch 2.1.2 cu121            #to avoid flas attention not compiled on windows
+3. $ pip install transformers pandas tdqm
+4. $ python split_csv.py
+5. $ python generate_scripts.py
+6. $ ./run_all_checkpointed.sh
+
+ *or download the split_csv.py, generate_scripts.py, and run_all_checkpointed.sh individually or by zip.
+
+## Note
 One issue is that execution time is mainly influenced by max token length. The ideal thing is to set max token length
 low and just above the sum of tokens of the prompt and the length of the response you specify. Instruct language models aren't 100% consistent or predictable with prompt adherence. I have had outputs where it adds commentary or notes on characterizing the response which I would discard later. In this case I set max token length to 256 despite an expected 130 token length, since cut off output that lack the delimiting symbols for question and answer is no good. This however more than doubles the execution time.
