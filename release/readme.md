@@ -2,7 +2,7 @@
 
 This approach involves taking a CSV file named `subject` with a single column containing *k* rows and splitting it into segmented CSV files of 1000 rows each. These segmented CSV files are then serialized. The generation script traverses the directory, identifies the CSV files, and generates Python scripts to run an inference pipeline. Each script processes the rows one by one, passing each subject to a predefined prompt designed to generate questions and answers about the subject, assuming the context of playing a character in a fantasy role-playing game world.
 
-Using models like **ChatGPT** or algorithmic random word generators such as **LLaMA 3.1 8B**, you can reliably generate diverse and creative responses for all rows in the CSV column, even when repeating a word from the `subject` column.
+Using models like **Mistral-7b** or  **LLaMA 3.1 8B Instruct**, you can reliably generate diverse and creative responses for all rows in the CSV column, even when repeating a word from the `subject` column.
 
 ## Customizing the Prompt
 
