@@ -5,6 +5,7 @@ import gc
 import re
 import random
 import os
+from collections import deque
 
 # Initialize the text generation pipeline with 16-bit precision
 print("Initializing the text generation pipeline with 16-bit precision...")
@@ -14,147 +15,85 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 text_generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 print("Text generation pipeline initialized with 16-bit precision.")
 
-# Seed words pool
-seed_words = ["A weathered iron brooch shaped like a raven, its wings etched with intricate knotwork",
-"A towering oak tree, its roots twisted around ancient stone idols buried deep in the earth",
-"A bronze shield engraved with the image of a coiled serpent, its eyes set with garnets",
-"A horned helm forged from dark iron, adorned with a single hawk feather",
-"A moss-covered stone circle, each monolith carved with mysterious spiral patterns",
-"A silver torc inlaid with emeralds, worn by the chieftain of a powerful clan",
-"A massive war hammer, its head shaped like a boar’s skull, with runes of strength along the handle",
-"A spectral hound with eyes that glow like burning coals, its fur black as night",
-"A pair of leather boots, reinforced with bronze plates, crafted for the swiftest warrior",
-"A cauldron of shimmering bronze, said to brew potions that grant visions of the future",
-"A deer with antlers made of living wood, leaves sprouting from its branches",
-"A longbow carved from yew wood, the bowstring glowing faintly with enchantment",
-"A stone altar stained with the blood of ancient sacrifices, surrounded by withered flowers",
-"A cloak of wolf fur, fastened with a silver brooch shaped like a wolf’s head",
-"A tall figure clad in green, their face obscured by a hood, holding a staff entwined with ivy",
-"A sword with a hilt wrapped in leather, the blade engraved with runes that glow in moonlight",
-"A gold coin minted with the image of a long-forgotten king, found buried in an ancient barrow",
-"A ring made of intertwined gold and silver bands, said to bind the wearer’s fate with another’s",
-"A spectral warrior clad in ancient armor, forever bound to guard the entrance to a sacred grove",
-"A deer antler carved into a hunting horn, used to summon allies from the spirit world",
-"A silver chalice, its rim encrusted with tiny rubies, used in druidic rituals",
-"A massive stone fortress perched on a hill, surrounded by a mist that never lifts",
-"A crow with feathers as black as night, often seen as a harbinger of doom",
-"A bronze spear tipped with a jagged flint blade, used in ritual hunts",
-"A tree hollow filled with glowing mushrooms that emit a soft, otherworldly light",
-"A ghostly figure dressed in tattered robes, holding an ancient staff of twisted wood",
-"A stag with golden antlers, revered as a symbol of the gods’ favor",
-"A wolf pelt cloak, lined with the fur of a dire wolf, worn by the clan’s greatest hunter",
-"A harp crafted from a single piece of oak, its strings humming with ancient melodies",
-"A stone cairn marked with runes that tell the tale of a hero’s final battle",
-"A golden torc, heavy and ornately decorated, signifying the wearer’s high status",
-"A glowing crystal embedded in the forehead of a druidic staff, pulsing with arcane power",
-"A blackened iron cauldron, used to brew potions that grant strength in battle",
-"A raven with eyes that glow a piercing blue, messenger of the otherworld",
-"A stone dagger, its blade chipped and worn, yet still sharp and deadly",
-"A large bear with fur as white as snow, a guardian spirit of the northern tribes",
-"A cloak woven from the leaves of an ancient oak, shimmering with protective magic",
-"A helm adorned with the horns of a stag, worn by the leader of the hunt",
-"A stone amulet carved with protective runes, worn by warriors into battle",
-"A spear tipped with a blade made of pure obsidian, glinting with a deadly sharpness",
-"A silver flute, its notes said to charm the animals of the forest",
-"A glowing wisp of light that leads travelers to hidden places of power",
-"A druidic circle where the very air hums with ancient power, stones aligned with the stars",
-"A worn leather-bound book filled with ancient Celtic spells and incantations",
-"A wolf with fur that blends perfectly with the shadows, stalking the forests at night",
-"A sword forged in the heart of a volcano, its blade forever burning with an inner fire",
-"A crown of oak leaves and mistletoe, worn by the high druid during sacred ceremonies",
-"A ghostly stag that appears only under the light of a full moon, leading lost souls to the afterlife",
-"A stone cairn at the top of a windswept hill, marking the grave of a forgotten hero",
-"A stone tablet inscribed with runes that tell the history of an ancient tribe",
-"A cloak of raven feathers, granting the wearer the ability to disappear into the night",
-"A spear with a shaft made from ash wood, its tip engraved with protective runes",
-"A bronze mirror that shows not only the reflection but the true nature of the person gazing into it",
-"A massive black bear with eyes that burn with the fire of an ancient spirit",
-"A golden goblet that never empties, always filled with the finest mead",
-"A wolf’s head carved into a stone pillar, symbolizing the power of the clan it protects",
-"A long, twisted staff of rowan wood, said to protect against evil spirits",
-"A ghostly hand reaching out from a pool of still water, beckoning travelers to their doom",
-"A stag’s head mounted on a wall, its antlers hung with trophies from countless hunts",
-"A silver dagger that hums with magic, used in rituals to bind and protect",
-"A stone circle on a hilltop, each stone engraved with runes of protection",
-"A bow crafted from the yew tree, its string made from the hair of a maiden sacrificed to the gods",
-"A raven perched on the shoulder of a druid, its eyes watching and knowing all",
-"A horn made from the tusk of a great boar, used to call warriors to battle",
-"A silver bracelet shaped like a serpent, its eyes set with tiny emeralds",
-"A dark forest where the trees whisper in an ancient tongue, and shadows move on their own",
-"A stag with fur that shines like silver in the moonlight, leading a herd of spectral deer",
-"A cauldron bubbling with a potion that grants visions of the past and future",
-"A golden torc that tightens around the wearer’s neck, binding them to a powerful curse",
-"A stone throne carved with symbols of the gods, set deep within a sacred grove",
-"A ghostly raven that appears on the battlefield, signaling the arrival of death",
-"A pair of boots made from the skin of a wolf, said to give the wearer the speed of the beast",
-"A tree with bark as white as bone, its roots said to reach into the underworld",
-"A silver chalice that glows faintly, used in rituals to commune with the gods",
-"A druidic staff made from a single branch of an ancient oak, its tip crowned with mistletoe",
-"A ring made of intertwined branches, enchanted to protect the wearer from harm",
-"A stone circle where the spirits of the dead gather to dance under the full moon",
-"A spear that hums with power, its tip forged from the heart of a fallen star",
-"A wolf with fur the color of ash, its eyes glowing with an eerie light",
-"A sword with a blade that gleams like silver, etched with runes of protection",
-"A raven’s feather dipped in ink, used to write spells of binding and control",
-"A golden belt adorned with symbols of the sun, worn by the high priestess",
-"A stone basin filled with water that reflects the future, used in druidic rituals",
-"A cloak made from the hide of a great bear, granting the wearer strength and protection",
-"A spear with a shaft made of rowan wood, tipped with a blade forged in dragon fire",
-"A ghostly figure that walks the forest paths at night, guiding lost travelers to safety",
-"A ring of stones on a hilltop, where the ancient gods are said to have walked",
-"A blacksmith’s hammer that glows with heat, used to forge weapons of great power",
-"A silver necklace with a pendant shaped like a crescent moon, symbolizing the goddess",
-"A stone tower overlooking the sea, where the winds whisper secrets of the deep",
-"A raven with a single white feather, known as a messenger of the gods",
-"A cauldron that never empties, always bubbling with a potion of healing",
-"A spear tipped with a blade made of pure crystal, glowing with an inner light"]
-used_words = set()
+
 
 # Function to generate a detailed visual description prompt
 def generate_description_prompt(subject):
-    prompt = f"Generate a detailed visual description of something in a fantasy RPG setting different from {subject}."
-    generated_text = text_generator(prompt, max_length=100, num_return_sequences=1)[0]['generated_text']
-    generated_description = re.sub(rf'{re.escape(prompt)}\s*', '', generated_text).strip()  # Remove the prompt from the generated text
-    return generated_description
+    prompt = f"Generate a vivid visual description (less than 35 words) of a single object, landform, building, creature, plant, or possession in an ancient celt, roman, germanic, babylon, egypt, and fantasy RPG setting different from {subject}. Be unique and make each example exotically different from the previous, alternating between object, animal, building, plant, mythical creature, and others. Enclose each description in brackets like [ <description> ]. The described item should be a distinct object easy for an AI to 3D model from an image of it. No comments. always finish description"
+    try:
+        generated_text = text_generator(prompt, max_length=190, num_return_sequences=1, truncation=True)[0]['generated_text']
+        generated_description = re.sub(rf'{re.escape(prompt)}\s*', '', generated_text).strip()  # Remove the prompt from the generated text
+        return generated_description if generated_description else None
+    except Exception as e:
+        print(f"Error generating description for subject '{subject}': {e}")
+        return None
 
-# Function to generate text and write to CSV
-def generate_and_write_to_csv(output_csv):
+
+# Seed words pool
+seed_words = ["glimmering stone pillar carved with intricate runes, bathed in soft moonlight", "ancient oak tree with massive roots coiled around a weathered silver sword", "large, golden dragon's egg resting on sharp, black obsidian shards", "shallow crystal-clear pool with a mirror-like surface reflecting a starry night sky", "brooch shaped like a phoenix, with detailed feathers and a glowing amber core", "round talisman made of polished jade, softly pulsing with green light", "stone idol of a god with glowing eyes, worn and cracked by time", "ornate silver harp, its strings made of delicate threads that shimmer", "tall crystal staff topped with a jagged shard of ice that glows faintly", "shadowy nymph with delicate features, darting between dense, dark trees", "round shield made of dark metal, covered in glowing runes and etched patterns", "large sunken temple with broken columns, surrounded by ghostly, glowing fish", "serpent made of gold coiled tightly around a large, shiny apple", "floating island with jagged edges, perpetually shrouded in twilight mist", "smooth, round pearl orb with swirling, cloudy patterns inside", "elegant silver chalice filled with a liquid that sparkles and shifts like starlight", "vortex of churning water suspended in the air, constantly rotating", "tall standing stone with lightning-like cracks glowing from within", "ornate golden helmet adorned with large, colorful feathers", "floating, glowing candle that casts no shadow and never melts", "emerald-encrusted amulet with a realistic dragon's eye at its center", "vibrant coral garden, glowing softly in a dark underwater cavern", "thick, ancient tome bound in rough dragonhide, pages glowing with a faint blue light", "celestial sphere made of metal, rotating slowly with engraved star maps", "crescent moonstone pendant that emits a faint, cold light", "ivy-covered ruins of an ancient city with crumbling walls and tall spires", "bronze gate with a glowing inscription, sealed tightly by magic", "grove of tall, ancient trees where time appears frozen, leaves unmoving", "polished mirror with a smooth, reflective surface that shows shifting images", "obsidian dagger with a sharp, curved blade, glowing with red energy", "elegant quill made of gold, writing on its own in mid-air with glowing ink", "flat stone altar surrounded by flickering blue ghostly flames", "crystal skull with hollow eyes, a faint light flickering within", "ancient manuscript with tattered edges, soaked and decayed, yet glowing faintly", "hollow tree with a dark entrance leading to a maze of roots below", "arched bridge made of delicate, translucent moonbeams", "jeweled goblet with intricate engravings, glowing faintly as it fills with liquid", "golden crown adorned with large, glowing rubies, resting on a velvet cushion", "thin silver ring with an inscription that glows under moonlight", "frozen waterfall with ice that shimmers and emits a soft, musical tone", "ornate lantern with a flickering, eternal flame inside", "small silver key with ornate designs, glowing before it vanishes", "thin, shimmering veil suspended in the air, separating two different realms", "secluded forest grove with leaves that rustle with whispered voices", "stone archway with glowing runes, standing alone in a clearing", "ember of an eternal fire, glowing brightly and never cooling", "waterfall that defies gravity, flowing upwards into the sky", "ancient tree with metallic golden leaves that softly shimmer", "giant mushroom with a broad cap, glowing faintly with an eerie light", "ghostly ship with tattered sails, floating on a sea of dense mist", "treasure chest covered in barnacles, guarded by a large, coiled sea serpent", "comet with a fiery red tail, streaking across a dark sky", "stone altar under the moonlight, dedicated to an ancient, forgotten goddess", "large bronze bell, tarnished and cracked, tolling on its own", "glowing map with intricate details, charting the stars and celestial paths", "moss-covered stone face with water trickling continuously from its mouth", "hourglass with shimmering sand, flowing endlessly without running out", "ring of tall standing stones, each one glowing with a different color", "silver arrow with a sharp, pointed tip, glowing with a faint blue light", "crystal ball on a pedestal, clouded with swirling mist inside", "ancient tree with twisted branches, glowing with the light of trapped souls", "stone portal with a glowing center, hidden deep within a cave", "floating crystal, slowly rotating and humming with a soft vibration", "gilded cage holding a small, flickering flame", "large, ice-covered heart that pulses slowly with light", "shimmering fabric stretched across a frame, resembling the night sky", "golden apple with a smooth surface, glowing faintly in the dark", "large anvil made of dark metal, surrounded by the glow of indestructible weapons", "flat stone tablet with glowing, engraved words", "golden harp with fine strings, glowing softly as it plays itself", "forest of petrified trees, each one frozen in place and glowing faintly", "ancient horn made of bone, glowing faintly as it echoes", "shifting sands that glimmer under the sunlight, hiding the ruins of lost cities", "dark figure cloaked in mist, barely visible within an enchanted forest", "glowing scales of a water dragon, shimmering beneath a tranquil lake", "jeweled scarab with a detailed carapace, glowing with ancient magic", "quiver made of dark leather, glowing as it never runs out of arrows", "feather of a phoenix, glowing with eternal fire and warmth", "sapphire pendant with a glowing center, pulsing like ocean waves", "bronze shield with a raised emblem, glowing faintly with ancient power", "floating rune, glowing softly and hovering just above the ground", "curved blade covered in frost, emitting a cold, sharp glow", "heavy stone door with intricate carvings, glowing with mystical energy", "water sprite with delicate wings, dancing above the surface of a pond", "orb of pure, crackling energy, glowing and floating in mid-air", "sword made of light, glowing brightly and cutting through darkness", "clear spring with water that glows, showing visions of the future", "ethereal butterfly with glowing wings, guiding travelers through darkness", "garden with flowers that glow softly, singing in the wind", "dark grove filled with glowing orbs, where spirits of the forest dwell", "large stone throne carved from bone, glowing with the essence of a leviathan", "glowing sigil engraved on a stone wall, marking the entrance to a lost city", "dark red cloak that glows faintly and renders the wearer invisible in shadows", "shimmering waterfall made of liquid light, glowing as it flows", "ornate crown with glowing runes, bestowing wisdom to the wearer", "constellation of stars frozen in the sky, glowing brightly against the darkness"
+]
+used_words = set()
+
+def generate_and_write_to_files(output_csv, output_txt, batch_size=100):
     descriptions = []
+    description_queue = deque()
 
     # Check if the CSV file already exists
     if os.path.exists(output_csv):
         existing_df = pd.read_csv(output_csv)
         descriptions = existing_df.to_dict('records')
 
-    # Select a subject that has not been used
-    available_subjects = [word for word in seed_words if word not in used_words]
-    if not available_subjects:
-        print("No more available subjects to use.")
-        return
+    while True:
+        # Select a subject that has not been used
+        available_subjects = [word for word in seed_words if word not in used_words]
+        if not available_subjects:
+            print("No more available subjects to use.")
+            break
 
-    subject = random.choice(available_subjects)
-    generated_description = generate_description_prompt(subject)
-    descriptions.append({'subject': subject, 'description': generated_description})
+        subject = random.choice(available_subjects)
+        generated_description = generate_description_prompt(subject)
+        
+        if generated_description:
+            # Remove any offending symbols
+            clean_description = generated_description.encode('ascii', 'ignore').decode('ascii')
+            description_queue.append({'subject': subject, 'description': clean_description})
 
-    # Update used words and seed words
-    used_words.add(subject)
-    seed_words.append(generated_description)  # Add the generated description to the seed bank array
+            # Print the generated description to the command line
+            print(f"Generated description for subject '{subject}': {clean_description}")
 
+            # Update used words and seed words
+            used_words.add(subject)
+            seed_words.append(clean_description)  # Add the generated description to the seed bank array
+
+            # Batch write descriptions to CSV and TXT files
+            if len(description_queue) >= batch_size:
+                batch_write_to_files(description_queue, output_csv, output_txt)
+                description_queue.clear()
+
+    # Write any remaining descriptions in the queue
+    if description_queue:
+        batch_write_to_files(description_queue, output_csv, output_txt)
+
+def batch_write_to_files(description_queue, output_csv, output_txt):
     # Convert the result to a pandas DataFrame and save to CSV
-    result_df = pd.DataFrame(descriptions)
-    result_df.to_csv(output_csv, index=False)
-    print(f"All generated descriptions written to {output_csv}")
+    result_df = pd.DataFrame(description_queue)
+    result_df.to_csv(output_csv, index=False, mode='a', header=not os.path.exists(output_csv))
+    print(f"Batch of descriptions written to {output_csv}")
 
     # Save the generated texts to a .txt file with utf-8 encoding
-    with open(output_csv.replace('.csv', '.txt'), 'w', encoding='utf-8') as txt_file:
-        for description in descriptions:
+    with open(output_txt, 'a', encoding='utf-8') as txt_file:
+        for description in description_queue:
             txt_file.write(description['description'] + '\n')
-    print(f"All generated descriptions written to {output_csv.replace('.csv', '.txt')}")
+    print(f"Batch of descriptions written to {output_txt}")
 
-# Run the function
-generate_and_write_to_csv('descriptions.csv')
+# Clear GPU memory when the process is closed
+def clear_gpu_memory():
+    torch.cuda.empty_cache()
+    gc.collect()
+    print("GPU memory cleared.")
 
-# Clear GPU memory
-torch.cuda.empty_cache()
-gc.collect()
-print("GPU memory cleared.")
+# Run the function indefinitely
+try:
+    generate_and_write_to_files('descriptions.csv', 'descriptions.txt')
+finally:
+    clear_gpu_memory()
