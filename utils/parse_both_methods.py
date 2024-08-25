@@ -5,7 +5,7 @@ def parse_csv(file_path):
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
         for row in reader:
-            subject, text = row
+            text = row[1]  # Ignore the subject column and only use the dialogue column
             question, answer = None, None
             try:
                 # First method
@@ -20,15 +20,15 @@ def parse_csv(file_path):
                     # Skip the row if both methods fail
                     continue
             if question and answer:
-                parsed_data.append((subject, question, answer))
+                parsed_data.append((question, answer))
     return parsed_data
 
 def write_parsed_csv(parsed_data, output_file_path):
     with open(output_file_path, 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Subject', 'Question', 'Answer'])
-        for subject, question, answer in parsed_data:
-            writer.writerow([subject, question, answer])
+        writer.writerow(['Question', 'Answer'])
+        for question, answer in parsed_data:
+            writer.writerow([question, answer])
 
 # Example usage
 input_file_path = 'merged_output.csv'

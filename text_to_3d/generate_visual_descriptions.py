@@ -4,6 +4,7 @@ import torch
 import gc
 import re
 import random
+import os
 
 # Initialize the text generation pipeline with 16-bit precision
 print("Initializing the text generation pipeline with 16-bit precision...")
@@ -12,10 +13,6 @@ model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 text_generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 print("Text generation pipeline initialized with 16-bit precision.")
-
-
-
-
 
 # Seed words pool
 seed_words = ["A weathered iron brooch shaped like a raven, its wings etched with intricate knotwork",
@@ -115,28 +112,33 @@ used_words = set()
 
 # Function to generate a detailed visual description prompt
 def generate_description_prompt(subject):
-    prompt = f"Generate a detailed visual description of an object, character, or animal in a fantasy RPG setting different from {subject}."
+    prompt = f"Generate a detailed visual description of something in a fantasy RPG setting different from {subject}."
     generated_text = text_generator(prompt, max_length=100, num_return_sequences=1)[0]['generated_text']
     generated_description = re.sub(rf'{re.escape(prompt)}\s*', '', generated_text).strip()  # Remove the prompt from the generated text
     return generated_description
 
 # Function to generate text and write to CSV
-def generate_and_write_to_csv(output_csv, num_iterations=10):
+def generate_and_write_to_csv(output_csv):
     descriptions = []
-    for _ in range(num_iterations):
-        # Select a subject that has not been used
-        available_subjects = [word for word in seed_words if word not in used_words]
-        if not available_subjects:
-            print("No more available subjects to use.")
-            break
 
-        subject = random.choice(available_subjects)
-        generated_description = generate_description_prompt(subject)
-        descriptions.append({'subject': subject, 'description': generated_description})
+    # Check if the CSV file already exists
+    if os.path.exists(output_csv):
+        existing_df = pd.read_csv(output_csv)
+        descriptions = existing_df.to_dict('records')
 
-        # Update used words and seed words
-        used_words.add(subject)
-        seed_words.append(generated_description)  # Add the generated description to the seed bank array
+    # Select a subject that has not been used
+    available_subjects = [word for word in seed_words if word not in used_words]
+    if not available_subjects:
+        print("No more available subjects to use.")
+        return
+
+    subject = random.choice(available_subjects)
+    generated_description = generate_description_prompt(subject)
+    descriptions.append({'subject': subject, 'description': generated_description})
+
+    # Update used words and seed words
+    used_words.add(subject)
+    seed_words.append(generated_description)  # Add the generated description to the seed bank array
 
     # Convert the result to a pandas DataFrame and save to CSV
     result_df = pd.DataFrame(descriptions)

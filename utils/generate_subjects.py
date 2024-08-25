@@ -4,6 +4,7 @@ import torch
 import gc
 import re
 import random
+import os
 
 # Initialize the text generation pipeline with 16-bit precision
 print("Initializing the text generation pipeline with 16-bit precision...")
@@ -19,18 +20,28 @@ used_words = set()
 
 # Function to generate a word related to the subject
 def generate_word(subject):
-    prompt = f"List a word related to {subject} and do not repeat words."
-    generated_text = text_generator(prompt, max_length=5, num_return_sequences=1)[0]['generated_text']
+    prompt = f"List a wubject in fnatasy rpg setting different from {subject} and do not repeat words."
+    generated_text = text_generator(prompt, max_length=10, num_return_sequences=1)[0]['generated_text']
     generated_word = re.sub(rf'{re.escape(prompt)}\s*', '', generated_text).strip()  # Remove the prompt from the generated text
     return generated_word
 
-# Function to generate text and write to CSV
-def generate_and_write_to_csv(output_csv):
+# Function to generate text and write to CSV and TXT
+def generate_and_write_to_files(output_csv, output_txt):
     dialogues = []
-    for subject in seed_words:
-        if subject in used_words:
-            continue
 
+    # Check if the CSV file already exists
+    if os.path.exists(output_csv):
+        existing_df = pd.read_csv(output_csv)
+        dialogues = existing_df.to_dict('records')
+
+    while True:
+        # Select a subject that has not been used
+        available_subjects = [word for word in seed_words if word not in used_words]
+        if not available_subjects:
+            print("No more available subjects to use.")
+            break
+
+        subject = random.choice(available_subjects)
         generated_word = generate_word(subject)
         dialogues.append({'subject': generated_word})
 
@@ -39,21 +50,20 @@ def generate_and_write_to_csv(output_csv):
         used_words.add(generated_word)  # Ensure the generated word is not reused
         seed_words.append(generated_word)
 
-    # Convert the result to a pandas DataFrame and save to CSV
-    result_df = pd.DataFrame(dialogues)
-    result_df.to_csv(output_csv, index=False)
-    print(f"All generated words written to {output_csv}")
+        # Convert the result to a pandas DataFrame and save to CSV
+        result_df = pd.DataFrame(dialogues)
+        result_df.to_csv(output_csv, index=False, mode='a', header=not os.path.exists(output_csv))
+        print(f"All generated words written to {output_csv}")
 
-    # Save the generated texts to a .txt file with utf-8 encoding
-    with open(output_csv.replace('.csv', '.txt'), 'w', encoding='utf-8') as txt_file:
-        for dialogue in dialogues:
-            txt_file.write(dialogue['subject'] + '\n')
-    print(f"All generated words written to {output_csv.replace('.csv', '.txt')}")
+        # Save the generated texts to a .txt file with utf-8 encoding
+        with open(output_txt, 'a', encoding='utf-8') as txt_file:
+            txt_file.write(generated_word + '\n')
+        print(f"All generated words written to {output_txt}")
 
-# Run the function
-generate_and_write_to_csv('subject.csv')
+        # Clear GPU memory
+        torch.cuda.empty_cache()
+        gc.collect()
+        print("GPU memory cleared.")
 
-# Clear GPU memory
-torch.cuda.empty_cache()
-gc.collect()
-print("GPU memory cleared.")
+# Run the function indefinitely
+generate_and_write_to_files('subject.csv', 'subject.txt')
