@@ -19,9 +19,9 @@ print("Text generation pipeline initialized with 16-bit precision.")
 
 # Function to generate a detailed visual description prompt
 def generate_description_prompt(subject):
-    prompt = f"Generate a vivid visual description (less than 35 words) of a single object, landform, building, creature, plant, or possession in an ancient celt, roman, germanic, babylon, egypt, and fantasy RPG setting different from {subject}. Be unique and make each example exotically different from the previous, alternating between object, animal, building, plant, mythical creature, and others. Enclose each description in brackets like [ <description> ]. The described item should be a distinct object easy for an AI to 3D model from an image of it. No comments. always finish description"
+    prompt = f"write concise vivid visual description enclosed in brackets like [ <description> ] less than 50 words of a single object, landform, building, creature, plant, or possession from varied ancient historical, mythological, and fantasy RPG settings different from {subject}. each example very different alternating between object, animal, building, plant, mythical creature, and others. The description is physically distinct easy for an AI to 3D model from an image of it. No comments, always finish the description."
     try:
-        generated_text = text_generator(prompt, max_length=190, num_return_sequences=1, truncation=True)[0]['generated_text']
+        generated_text = text_generator(prompt, max_length=150, num_return_sequences=1, truncation=True)[0]['generated_text']
         generated_description = re.sub(rf'{re.escape(prompt)}\s*', '', generated_text).strip()  # Remove the prompt from the generated text
         return generated_description if generated_description else None
     except Exception as e:
