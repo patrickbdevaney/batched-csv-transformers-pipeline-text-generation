@@ -12,7 +12,7 @@ def generate_python_scripts(num_splits):
             "from tqdm.auto import tqdm\n\n"
             "# Initialize the image generation pipeline\n"
             "print('Initializing the image generation pipeline...')\n"
-            "model_id = 'black-forest-labs/FLUX.1-schnell'\n"
+            "model_id = 'black-forest-labs/FLUX.1-dev'\n"
             "pipe = FluxPipeline.from_pretrained(model_id, torch_dtype=torch.bfloat16)\n"
             "pipe.enable_model_cpu_offload()  # Save some VRAM by offloading the model to CPU\n"
             "print('Image generation pipeline initialized.')\n\n"
