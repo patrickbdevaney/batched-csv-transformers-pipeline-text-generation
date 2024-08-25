@@ -128,3 +128,8 @@ https://github.com/TencentARC/InstantMesh
 python run.py configs/instant-mesh-large.yaml examples/hatsune_miku.png --save_video
 
 This creates a workflow on a single GPU to make hundreds of 3d model assets for a video game, metaverse, and other simulative use cases.
+
+## Update 
+Image description generator has been successfully implemented with quality control. It can indefinitely generate thousands of prompts for stable diffusion pipelines, flux, auraflow, and others. The subject generator and image generator programs are essentially self perpetuating for text generation, while keeping within a certain theme. 
+
+Currently running a trial on the flux image generation scripts. While I prefer git bash and sh I wrote scripts for bat because you cannot make virtual environments in Windows with git bash and require command prompt or powershell. For the the text generation component of dialogues and description generation, standard versions of python packages like transformers are acceptable. In the case of flux and other specific frameworks its better to use venvs/conda as appropriate.  
