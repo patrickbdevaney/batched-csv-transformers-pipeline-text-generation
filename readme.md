@@ -132,4 +132,31 @@ This creates a workflow on a single GPU to make hundreds of 3d model assets for 
 ## Update 
 Image description generator has been successfully implemented with quality control. It can indefinitely generate thousands of prompts for stable diffusion pipelines, flux, auraflow, and others. The subject generator and image generator programs are essentially self perpetuating for text generation, while keeping within a certain theme. 
 
-Currently running a trial on the flux image generation scripts. While I prefer git bash and sh I wrote scripts for bat because you cannot make virtual environments in Windows with git bash and require command prompt or powershell. For the the text generation component of dialogues and description generation, standard versions of python packages like transformers are acceptable. In the case of flux and other specific frameworks its better to use venvs/conda as appropriate.  
+I wrote scripts for bat because you cannot make virtual environments in Windows with git bash' require command prompt or powershell. For the the text generation component of dialogues and description generation, standard versions of python packages like transformers are acceptable. In the case of flux and other specific frameworks its better to use venvs/conda as appropriate.  
+
+## Image Generation - Getting Started
+
+1. git clone https://github.com/patrickbdevaney/batched-csv-transformers-pipeline-text-generation
+
+2. edit one of the image gen scripts e.g. generate_arch_desc_v2.py. Change the contents of the string array seed bank to descriptions of objects related to what you want to generate.
+
+3. change the prompt to guide the theme and nature of the descriptions you want to generate. This will affect the form and content images generated. 
+
+4. run this script until you get about 1000 descriptions.
+
+5. run description_parser.py to normalize the contents.
+
+6. change file name of parsed descriptions for clarity and to not overwrite with other image description lists parsed.
+
+7. either run split_img_desc_csv.py, scriptgen-flux-schnell-4.py, and gen_maestro.bat for checkpointed image generation runs, or merge.py to merge parsed description lists and oneshot_v2.py to iterate over all descriptions at once. 
+
+## Notes on Image Gen
+
+Checkpointed is better for very large csvs or runs in which you generate images with flux dev with 50 steps which is time consumptive. The purpose of checkpointing is to allow a seamless way to finish generation, shut down and quit mid way through while not having to start from the beginning. One shot is better for schnell 4 step image generation.
+
+Given the same prompt and seed, flux is very consistent with the appearance of the output. You can get an idea of what it will generate by using flux schnell four step. You can then check the image number, its corresponding row in descriptions.csv will be <number>+1. 
+
+You can then rerun the same prompt with more steps or modify the wrapper prompt in oneshot.py or scriptgen-flux-schnell-4.py.
+
+My recommendation is to iterate with schnell over a large number of descriptions, then pick out prompts you nike form descriptions.csv and rerun with more steps and desired modifications to the wrapper prompt of oneshot.py
+

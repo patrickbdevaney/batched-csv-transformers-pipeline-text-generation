@@ -19,9 +19,34 @@ print("Text generation pipeline initialized with 16-bit precision.")
 
 # Function to generate a detailed visual description prompt
 def generate_description_prompt(subject):
-    prompt = f"write concise vivid visual description enclosed in brackets like [ <description> ] less than 100 words of intricate varied architectural elements in ancient bronze age iron age celtic and insular monastic, minoan, etruscan, mycenaean, and medieval like frankish and venetian style different from {subject}. each example very different alternating frieze columns, portico, archway atrium, arcade, gate- modular elements to compose buildings colorful materials varied marble wood stone etc. The description is physically distinct easy for an AI to 3D model from an image of it. No comments, always finish the description."
+    prompt = f"write concise vivid visual description enclosed in brackets like [ <description> ] less than 50 words of a single object, landform, building, creature, plant, or possession from varied ancient historical, mythological, and fantasy RPG settings different from {subject}. each example very different alternating between object, animal, building, plant, mythical creature, and others. The description is physically distinct easy for an AI to 3D model from an image of it. No comments, always finish the description."
     try:
-        generated_text = text_generator(prompt, max_length=230, num_return_sequences=1, truncation=True)[0]['generated_text']
+        generated_text = text_generator(prompt, max_length=150, num_return_sequences=1, truncation=True)[0]['generated_text']
+        generated_description = re.sub(rf'{re.escape(prompt)}\s*', '', generated_text).strip()  # Remove the prompt from the generated text
+import pandas as pd
+from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
+import torch
+import gc
+import re
+import random
+import os
+from collections import deque
+
+# Initialize the text generation pipeline with 16-bit precision
+print("Initializing the text generation pipeline with 16-bit precision...")
+model_name = 'meta-llama/Meta-Llama-3.1-8B-Instruct'
+model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16, device_map='auto')
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+text_generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
+print("Text generation pipeline initialized with 16-bit precision.")
+
+
+
+# Function to generate a detailed visual description prompt
+def generate_description_prompt(subject):
+ prompt = f"List a subject in fantasy rpg setting different from {subject} and do not repeat words."
+    try:
+        generated_text = text_generator(prompt, max_length=150, num_return_sequences=1, truncation=True)[0]['generated_text']
         generated_description = re.sub(rf'{re.escape(prompt)}\s*', '', generated_text).strip()  # Remove the prompt from the generated text
         return generated_description if generated_description else None
     except Exception as e:
@@ -30,14 +55,7 @@ def generate_description_prompt(subject):
 
 
 # Seed words pool
-#add more as needed
-seed_words = ["A high elven marble archway adorned with intricate vine patterns and sparkling crystal inlays, the arch is tall and slender, perfect for grand entrances.",
-"A Venetian portico with a series of semi-circular arches supported by fluted columns, the marble is polished to a mirror finish and decorated with floral motifs.",
-"A Norman castle portcullis made of wrought iron, featuring a lattice design and reinforced with rivets, the gate is both imposing and functional.",
-"A Mycenaean column with a fluted shaft and a capital decorated with spiral patterns, the marble has a warm, golden hue.",
-"An elven atrium with a domed ceiling and walls adorned with delicate filigree, the space is filled with natural light and features a central fountain."
-]
-
+seed_words = ["Elf", "Dragon", "Undead", "Lich", "Mage", "Knight", "Siren", "Dwarf", "God", "Demon", "Mummy", "Tomb", "Tavern", "Wizard", "Orc", "Paladin", "Necromancer", "Golem", "Goblin", "Vampire", "Ranger", "Thief", "Sorcerer", "Witch", "Barbarian", "Priest", "Cleric", "Warrior", "Ghoul", "Banshee", "Phoenix", "Fairy", "Troll", "Minotaur", "Bard", "Warlock", "Giant", "Werewolf", "Warlord", "Enchanter", "Druid", "Harpy", "Assassin", "Shaman", "Zombie", "Chimera", "Gryphon", "Djinn", "Sphinx", "Titan", "Gorgon", "Sprite", "Succubus", "Imp", "Nymph", "Dryad", "Lamia", "Naga", "Mermaid", "Elemental", "Yeti", "Centaur", "Cyclops", "Hobbit", "Hag", "Revenant", "Behemoth", "Gargoyle", "Wyvern", "Kraken", "Djinni", "Wraith", "Manticore", "Bugbear", "Kobold", "Ogre", "Satyr", "Valkyrie", "Shade", "Homunculus", "Gremlin", "Roc", "Kelpie", "Salamander", "Wyrm", "Basilisk", "Hydra", "Undine", "Efreet", "Seraph", "Tarrasque", "Rakshasa", "Incubus", "Chimera", "Sylph", "Drake", "Ifrit", "Jotun"]
 used_words = set()
 
 def generate_and_write_to_files(output_csv, output_txt, batch_size=100):

@@ -30,55 +30,12 @@ def generate_description_prompt(subject):
 
 
 # Seed words pool
+#add more as needed
 seed_words = ["A Celtic bronze breastplate with intricate knotwork patterns, the metal shimmering with a greenish hue. The edges are adorned with small, polished amber stones.",
 "An Iron Age helmet with a simple, purposeful design, made from dark iron and featuring a plume of red horsehair. The visor is decorated with geometric patterns.",
 "A bronze greave with a swirling motif, the metal glowing with a golden sheen. The edges are reinforced with strips of leather for added protection.",
-"A Celtic iron shield with a central boss of polished silver, surrounded by intricate spiral patterns. The surface is painted with a deep blue hue.",
-"A bronze cuirass with a series of interlocking plates, each adorned with a different animal motif. The metal has a reddish tint, and the edges are lined with fur.",
-"An Iron Age gauntlet with a simple, utilitarian design, made from dark iron and featuring a series of rivets for added strength. The fingers are articulated for flexibility.",
-"A Celtic bronze helmet with a high crest, adorned with intricate knotwork patterns. The metal has a greenish hue, and the edges are lined with fur.",
-"A bronze vambrace with a series of interlocking plates, each adorned with a different geometric pattern. The metal has a golden sheen, and the edges are reinforced with leather.",
-"An Iron Age breastplate with a simple, purposeful design, made from dark iron and featuring a series of rivets for added strength. The surface is polished to a mirror finish.",
-"A Celtic iron greave with a swirling motif, the metal glowing with a bluish hue. The edges are reinforced with strips of leather for added protection.",
-"A bronze shield with a central boss of polished silver, surrounded by intricate spiral patterns. The surface is painted with a deep red hue.",
-"An Iron Age helmet with a simple, utilitarian design, made from dark iron and featuring a plume of black horsehair. The visor is decorated with geometric patterns.",
-"A Celtic bronze cuirass with a series of interlocking plates, each adorned with a different animal motif. The metal has a greenish tint, and the edges are lined with fur.",
-"A bronze gauntlet with a series of interlocking plates, each adorned with a different geometric pattern. The metal has a golden sheen, and the fingers are articulated for flexibility.",
-"An Iron Age vambrace with a simple, purposeful design, made from dark iron and featuring a series of rivets for added strength. The surface is polished to a mirror finish.",
-"A Celtic iron helmet with a high crest, adorned with intricate knotwork patterns. The metal has a bluish hue, and the edges are lined with fur.",
-"A bronze greave with a swirling motif, the metal glowing with a reddish tint. The edges are reinforced with strips of leather for added protection.",
-"An Iron Age shield with a central boss of polished silver, surrounded by intricate spiral patterns. The surface is painted with a deep green hue.",
-"A Celtic bronze breastplate with a series of interlocking plates, each adorned with a different animal motif. The metal has a greenish tint, and the edges are lined with fur.",
-"A bronze gauntlet with a series of interlocking plates, each adorned with a different geometric pattern. The metal has a golden sheen, and the fingers are articulated for flexibility.",
-"An Iron Age helmet with a simple, utilitarian design, made from dark iron and featuring a plume of white horsehair. The visor is decorated with geometric patterns.",
-"A Celtic iron vambrace with a swirling motif, the metal glowing with a bluish hue. The edges are reinforced with strips of leather for added protection.",
-"A bronze cuirass with a series of interlocking plates, each adorned with a different animal motif. The metal has a reddish tint, and the edges are lined with fur.",
-"An Iron Age greave with a simple, purposeful design, made from dark iron and featuring a series of rivets for added strength. The surface is polished to a mirror finish.",
-"A Celtic bronze helmet with a high crest, adorned with intricate knotwork patterns. The metal has a greenish hue, and the edges are lined with fur.",
-"A bronze shield with a central boss of polished silver, surrounded by intricate spiral patterns. The surface is painted with a deep purple hue.",
-"An Iron Age breastplate with a simple, utilitarian design, made from dark iron and featuring a series of rivets for added strength. The surface is polished to a mirror finish.",
-"A Celtic iron gauntlet with a swirling motif, the metal glowing with a bluish hue. The edges are reinforced with strips of leather for added protection.",
-"A bronze vambrace with a series of interlocking plates, each adorned with a different geometric pattern. The metal has a golden sheen, and the fingers are articulated for flexibility.",
-"An Iron Age helmet with a simple, purposeful design, made from dark iron and featuring a plume of green horsehair. The visor is decorated with geometric patterns.",
-"A Celtic bronze greave with a series of interlocking plates, each adorned with a different animal motif. The metal has a greenish tint, and the edges are lined with fur.",
-"A bronze cuirass with a swirling motif, the metal glowing with a reddish tint. The edges are reinforced with strips of leather for added protection.",
-"An Iron Age shield with a central boss of polished silver, surrounded by intricate spiral patterns. The surface is painted with a deep yellow hue.",
-"A Celtic iron breastplate with a series of interlocking plates, each adorned with a different animal motif. The metal has a bluish hue, and the edges are lined with fur.",
-"A bronze gauntlet with a series of interlocking plates, each adorned with a different geometric pattern. The metal has a golden sheen, and the fingers are articulated for flexibility.",
-"An Iron Age vambrace with a simple, utilitarian design, made from dark iron and featuring a series of rivets for added strength. The surface is polished to a mirror finish.",
-"A Celtic bronze helmet with a high crest, adorned with intricate knotwork patterns. The metal has a greenish hue, and the edges are lined with fur.",
-"A bronze greave with a swirling motif, the metal glowing with a reddish tint. The edges are reinforced with strips of leather for added protection.",
-"An Iron Age breastplate with a simple, purposeful design, made from dark iron and featuring a series of rivets for added strength. The surface is polished to a mirror finish.",
-"A Celtic iron shield with a central boss of polished silver, surrounded by intricate spiral patterns. The surface is painted with a deep blue hue.",
-"A bronze cuirass with a series of interlocking plates, each adorned with a different animal motif. The metal has a reddish tint, and the edges are lined with fur.",
-"An Iron Age gauntlet with a simple, utilitarian design, made from dark iron and featuring a series of rivets for added strength. The fingers are articulated for flexibility.",
-"A Celtic bronze helmet with a high crest, adorned with intricate knotwork patterns. The metal has a greenish hue, and the edges are lined with fur.",
-"A bronze vambrace with a series of interlocking plates, each adorned with a different geometric pattern. The metal has a golden sheen, and the edges are reinforced with leather.",
-"An Iron Age breastplate with a simple, purposeful design, made from dark iron and featuring a series of rivets for added strength. The surface is polished to a mirror finish.",
-"A Celtic iron greave with a swirling motif, the metal glowing with a bluish hue. The edges are reinforced with strips of leather for added protection.",
-"A bronze shield with a central boss of polished silver, surrounded by intricate spiral patterns. The surface is painted with a deep red hue.",
-"An Iron Age helmet with a simple, utilitarian design, made from dark iron and featuring a plume of black horsehair. The visor is decorated with geometric patterns.",
-"A Celtic bronze cuirass with a series of interlocking plates, each adorned with a different animal motif. The metal has a greenish tint, and the edges are lined with fur."]
+"A Celtic iron shield with a central boss of polished silver, surrounded by intricate spiral patterns. The surface is painted with a deep blue hue."
+]
 
 used_words = set()
 
