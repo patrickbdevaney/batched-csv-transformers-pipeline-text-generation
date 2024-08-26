@@ -158,5 +158,5 @@ Given the same prompt and seed, flux is very consistent with the appearance of t
 
 You can then rerun the same prompt with more steps or modify the wrapper prompt in oneshot.py or scriptgen-flux-schnell-4.py.
 
-My recommendation is to iterate with schnell over a large number of descriptions, then pick out prompts you nike form descriptions.csv and rerun with more steps and desired modifications to the wrapper prompt of oneshot.py
+My recommendation is to iterate with schnell over a large number of descriptions, then pick out prompts you like form descriptions.csv and rerun with more steps and desired modifications to the wrapper prompt of oneshot.py. This way schnell demonstrates which prompts are promising in a lower fidelity version, then you can have flux dev or schnell modify it for high quality outputs.
 
