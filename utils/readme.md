@@ -1,5 +1,5 @@
 ##Merge
-The merge utility is to merge all of the serrialized output csvs to one csv. I used The following prompt
+The merge utility is to merge all of the serialized output csvs to one csv. I used The following prompt
 
  prompt = f"Role: character from ancient fantasy RPG. in character Q&A about {subject}. Q: less than 15 words. A: less than 35 words. Enclose Q in '*1*' <question> '*1*' and A in '*2*' <answer> '*2*'. Do not include any commentary or notes on output."
 
