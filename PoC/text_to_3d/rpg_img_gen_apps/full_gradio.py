@@ -16,9 +16,6 @@ import gradio as gr
 
 dtype = torch.bfloat16
 
-#generates descriptions in a granular controllable way, then loads schnell
-# and generates images in one pass
-
 # Set environment variables for local path
 os.environ['FLUX_DEV'] = '.'
 os.environ['AE'] = '.'
@@ -241,6 +238,14 @@ def pause_generation():
     used_words = set()
     print("Generation paused and seed word bank reset.")
 
+# Function to display descriptions in batches of 20
+def display_descriptions():
+    descriptions_df = pd.read_csv('descriptions_parsed.csv', header=None, names=['description'])
+    descriptions_list = descriptions_df['description'].tolist()
+    batch_size = 20
+    for i in range(0, len(descriptions_list), batch_size):
+        yield descriptions_list[i:i + batch_size]
+
 # Create Gradio interface
 iface = gr.Interface(
     fn=gradio_interface,
@@ -248,7 +253,11 @@ iface = gr.Interface(
         gr.inputs.Textbox(lines=2, placeholder="Enter seed words separated by commas", label="Seed Words"),
         gr.inputs.Textbox(lines=2, placeholder="Enter your prompt", label="User Prompt")
     ],
-    outputs="text",
+    outputs=[
+        gr.Image(label="Generated Image"),
+        gr.Textbox(label="Generated Description"),
+        gr.Textbox(label="Batch of Generated Descriptions")
+    ],
     live=True
 )
 
