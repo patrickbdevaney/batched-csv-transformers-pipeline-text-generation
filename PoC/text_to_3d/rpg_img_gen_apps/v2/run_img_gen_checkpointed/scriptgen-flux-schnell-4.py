@@ -70,7 +70,7 @@ def generate_python_scripts(directory):
             "pipe.transformer = transformer\n"
             "pipe.enable_model_cpu_offload()\n\n"
             "# Create a directory to save the generated images\n"
-            "output_dir = 'generated_images'\n"
+            f"output_dir = 'generated_images_{i}'\n"
             "os.makedirs(output_dir, exist_ok=True)\n\n"
             "# Function to generate an image based on the description\n"
             "def generate_image(description, seed=42):\n"
@@ -116,4 +116,3 @@ def generate_python_scripts(directory):
 # Generate Python scripts for the number of splits
 directory = '.'  # Replace with the actual directory if needed
 generate_python_scripts(directory)
-
